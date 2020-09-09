@@ -2,15 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-def gather(input1, input2):
-    b,c1,h,w = input1.shape
-    _,c2,_,_ = input2.shape
-    input1 = input1.view(b, 1, c1, h*w)
-    input2 = input2.view(b, c2, 1, h*w)
-    temp = input1 * F.softmax(input2, dim=-1)
-
-    return temp.mean(dim=-1)
-
 class DoubleAtten(nn.Module):
     """
     A2-Nets: Double Attention Networks. NIPS 2018
@@ -44,11 +35,11 @@ class DoubleAtten(nn.Module):
         out = torch.bmm(atten_vectors.permute(0,2,1), global_descriptors).permute(0,2,1) # 注意力向量左乘全局特征描述子
 
         return out.view(b, _, h, w)
-
-a = torch.randn(size=(4,512,16,16))
-model = DoubleAtten(512)
-a = model(a)
-print(a.shape)
+if __name__=="__main__":
+    a = torch.randn(size=(4,512,16,16))
+    model = DoubleAtten(512)
+    a = model(a)
+    print(a.shape)
 
 
 
